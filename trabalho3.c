@@ -77,13 +77,25 @@ void preencheVet(int *vetor){
 }
 
 void shellSort(int *vetor){
-
-    sleep(1);
-    system("clear");
-    imprimeGrafico(vetor);
+    int n = MAX,h = n/2, c,j;
+    while(h > 0){
+      for (int i = h;i < n;i++){
+        c = vetor[i];
+        j = i;
+        while (j >= h && vetor[j - h] > c){
+          vetor[j] = vetor[j-h];
+          j = j-h;
+        }
+        vetor[j] = c;
+      }
+      h = h/2;
+      sleep(1);
+      system("clear");
+      imprimeGrafico(vetor);
+    }
   printf("Vetor ordenado com Shell Sort:\n");
   imprimeVet(vetor);
-  printf("numero de iteracoes: %d",iteracoes);
+  //printf("numero de iteracoes: %d",iteracoes);
 }
 
 void bucketSort(int *vetor){
@@ -91,10 +103,9 @@ void bucketSort(int *vetor){
     sleep(1);
     system("clear");
     imprimeGrafico(vetor);
-  }
   printf("Vetor ordenado com Bucket Sort:\n");
   imprimeVet(vetor);
-  printf("numero de iteracoes: %d",iteracoes);
+  //printf("numero de iteracoes: %d",iteracoes);
 }
 
 void quickSort(int *vetor){
@@ -102,11 +113,10 @@ void quickSort(int *vetor){
       sleep(1);
       system("clear");
       imprimeGrafico(vetor);
-    }
-  }
+
   printf("Vetor ordenado com Insertion Sort:\n");
   imprimeVet(vetor);
-  printf("numero de iteracoes: %d",iteracoes);
+  //printf("numero de iteracoes: %d",iteracoes);
 }
 
 void imprimeVet(int *vetor){
