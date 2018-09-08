@@ -13,7 +13,10 @@ int mostraMenu();
 void preencheVet(int *vetor);
 void shellSort(int *vetor);
 void bucketSort(int *vetor);
-void quickSort(int *vetor);
+void quickSort(int *vetor, int inicio, int fim);
+void troca(int *vetor, int i, int j);
+int particiona(int *vetor, int inicio, int fim);
+int geraPivoRandomico(int *vetor, int inicio, int fim);
 void imprimeVet(int *vetor);
 void imprimeGrafico(int *vetor);
 
@@ -24,6 +27,7 @@ int main(void){
   time_t diff = time(NULL) - start;
   srand(time(NULL));
   int numeros[MAX] = {0};
+  int tamanhoVet = sizeof(numeros) / sizeof(int);
   int opcao;
 
   do{
@@ -39,7 +43,9 @@ int main(void){
         bucketSort(numeros);
         break;
       case 4:
-        quickSort(numeros);
+        quickSort(numeros, 0, tamanhoVet - 1);
+        printf("Vetor ordenado com Quick Sort:\n");
+        imprimeVet(numeros);
         break;
       case 5:
         imprimeGrafico(numeros);
@@ -108,15 +114,55 @@ void bucketSort(int *vetor){
   //printf("numero de iteracoes: %d",iteracoes);
 }
 
-void quickSort(int *vetor){
+void quickSort(int *vetor, int inicio, int fim){
+  if(inicio < fim){
+    int pivoIndice = geraPivoRandomico(vetor, inicio, fim);
+    quickSort(vetor, inicio, pivoIndice - 1);
+    quickSort(vetor, pivoIndice + 1, fim);
+  }
+    //  sleep(1); DEIXA SAPORRAS ONDE?
+    //  system("clear");
+    //  imprimeGrafico(vetor);
 
-      sleep(1);
-      system("clear");
-      imprimeGrafico(vetor);
-
-  printf("Vetor ordenado com Insertion Sort:\n");
-  imprimeVet(vetor);
+  //printf("Vetor ordenado com Quick Sort:\n"); TIREI ESSE PRINT E O IMPRIMEVET E COLOQUEI DEPOIS DA CHAMADA NO CASE
+  //imprimeVet(vetor);
   //printf("numero de iteracoes: %d",iteracoes);
+}
+
+  //funcao que troca a posicao de dois elementos pro quick sort
+void troca(int *vetor, int i, int j){
+  int aux = vetor[i];
+  vetor[i] = vetor[j];
+  vetor[j] = aux;
+}
+
+  //particiona e retorna o indice do pivo do quick sort
+int particiona(int *vetor, int inicio, int fim){
+  int pivo, pivoIndice, i;
+
+  pivo = vetor[fim]; // o pivo é sempre o ultimo elemento
+  pivoIndice = inicio;
+
+  for(i = inicio ; i < fim ; i++){
+    //verifica se o elemento é <= ao pivo
+    if(vetor[i] <= pivo){
+      troca(vetor, i, pivoIndice);
+      pivoIndice++;
+    }
+  }
+  //troca o pivo
+  troca(vetor, pivoIndice, fim);
+
+  return pivoIndice;
+}
+
+int geraPivoRandomico(int *vetor, int inicio, int fim){
+  //srand(time(NULL));
+  //seleciona um pivo aleatorio no vetor
+  int pivoIndice = (rand() % (fim - inicio + 1)) + inicio;
+  //coloca o pivo no fim
+  troca(vetor, pivoIndice, fim);
+  return particiona(vetor, inicio, fim);
 }
 
 void imprimeVet(int *vetor){
