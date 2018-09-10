@@ -23,8 +23,7 @@ void imprimeGrafico(int *vetor);
 clock_t clock(void);
 
 int main(void){
-  time_t start = time(NULL);
-  time_t diff = time(NULL) - start;
+  time_t start, end;
   srand(time(NULL));
   int numeros[MAX] = {0};
   int tamanhoVet = sizeof(numeros) / sizeof(int);
@@ -43,8 +42,12 @@ int main(void){
         bucketSort(numeros);
         break;
       case 4:
+        start = time(NULL);
         quickSort(numeros, 0, tamanhoVet - 1);
+        end = time(NULL);
+        float tempo = difftime(end,start);
         printf("Vetor ordenado com Quick Sort:\n");
+        printf("Tempo de execucao com Quick Sort: %.2f segundos\n", tempo);
         imprimeVet(numeros);
         break;
       case 5:
@@ -83,7 +86,8 @@ void preencheVet(int *vetor){
 }
 
 void shellSort(int *vetor){
-    int n = MAX,h = n/2, c,j;
+    time_t start = time(NULL), end;
+    int n = MAX, h = n/2, c, j;
     while(h > 0){
       for (int i = h;i < n;i++){
         c = vetor[i];
@@ -99,8 +103,11 @@ void shellSort(int *vetor){
       system("clear");
       imprimeGrafico(vetor);
     }
+    end = time(NULL);
+    float tempo = difftime(end, start);
   printf("Vetor ordenado com Shell Sort:\n");
   imprimeVet(vetor);
+  printf("Tempo de execucao com Shell Sort: %.2f segundos\n", tempo);
   //printf("numero de iteracoes: %d",iteracoes);
 }
 
@@ -117,13 +124,12 @@ void bucketSort(int *vetor){
 void quickSort(int *vetor, int inicio, int fim){
   if(inicio < fim){
     int pivoIndice = geraPivoRandomico(vetor, inicio, fim);
+    sleep(1);
+    system("clear");
+    imprimeGrafico(vetor);
     quickSort(vetor, inicio, pivoIndice - 1);
     quickSort(vetor, pivoIndice + 1, fim);
   }
-    //  sleep(1); DEIXA SAPORRAS ONDE?
-    //  system("clear");
-    //  imprimeGrafico(vetor);
-
   //printf("Vetor ordenado com Quick Sort:\n"); TIREI ESSE PRINT E O IMPRIMEVET E COLOQUEI DEPOIS DA CHAMADA NO CASE
   //imprimeVet(vetor);
   //printf("numero de iteracoes: %d",iteracoes);
