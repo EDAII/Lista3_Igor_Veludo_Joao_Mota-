@@ -8,6 +8,7 @@
 #include <unistd.h>
 
 #define MAX 40
+#define PAUSE 10000000
 
 int mostraMenu();
 void preencheVet(int *vetor);
@@ -17,6 +18,8 @@ void quickSort(int *vetor, int inicio, int fim);
 void troca(int *vetor, int i, int j);
 int particiona(int *vetor, int inicio, int fim);
 int geraPivoRandomico(int *vetor, int inicio, int fim);
+void mergeFim(int *vetor, int comeco, int meio, int fim);
+void mergeSort(int *vetor, int comeco, int fim);
 void imprimeVet(int *vetor);
 void imprimeGrafico(int *vetor);
 
@@ -28,6 +31,7 @@ int main(void){
   int numeros[MAX] = {0};
   int tamanhoVet = sizeof(numeros) / sizeof(int);
   int opcao;
+  float tempo = 0;
 
   do{
     opcao = mostraMenu();
@@ -39,19 +43,27 @@ int main(void){
         shellSort(numeros);
         break;
       case 3:
-        bucketSort(numeros);
+        start = time(NULL);
+        mergeSort(numeros,0,MAX-1);
+        end = time(NULL);
+        tempo = difftime(end,start);
+        printf("Vetor ordenado com Merge Sort:\n");
+        imprimeVet(numeros);
+        printf("Tempo de execucao com Merge Sort: %.2f segundos\n", tempo);
         break;
       case 4:
         start = time(NULL);
         quickSort(numeros, 0, tamanhoVet - 1);
         end = time(NULL);
-        float tempo = difftime(end,start);
+        tempo = difftime(end,start);
         printf("Vetor ordenado com Quick Sort:\n");
-        printf("Tempo de execucao com Quick Sort: %.2f segundos\n", tempo);
         imprimeVet(numeros);
+        printf("Tempo de execucao com Quick Sort: %.2f segundos\n", tempo);
         break;
       case 5:
         imprimeGrafico(numeros);
+        printf("Vetor:\n");
+        imprimeVet(numeros);
     }
   }while(opcao != 0);
 
@@ -66,7 +78,7 @@ int mostraMenu(){
   printf("|         >>>>>>>>> Menu <<<<<<<<<       |\n");
   printf("| 1 - Gerar Vetor Aleatorio              |\n");
   printf("| 2 - Ordenar Vetor Shell Sort           |\n");
-  printf("| 3 - Ordenar Vetor Bucket Sort          |\n");
+  printf("| 3 - Ordenar Vetor Merge Sort           |\n");
   printf("| 4 - Ordenar Vetor Quick Sort           |\n");
   printf("| 5 - Imprimir grafico                   |\n");
   printf("| 0 - Sair                               |\n");
@@ -95,44 +107,70 @@ void shellSort(int *vetor){
         while (j >= h && vetor[j - h] > c){
           vetor[j] = vetor[j-h];
           j = j-h;
+          for(int pause = 0; pause <= PAUSE;pause++); //loop para simular um pause
+          system("clear");
+          imprimeGrafico(vetor);
         }
         vetor[j] = c;
       }
       h = h/2;
-      sleep(1);
-      system("clear");
-      imprimeGrafico(vetor);
     }
     end = time(NULL);
     float tempo = difftime(end, start);
   printf("Vetor ordenado com Shell Sort:\n");
   imprimeVet(vetor);
   printf("Tempo de execucao com Shell Sort: %.2f segundos\n", tempo);
-  //printf("numero de iteracoes: %d",iteracoes);
 }
 
-void bucketSort(int *vetor){
+void mergeFim(int *vetor, int comeco, int meio, int fim) {
+    int com1 = comeco, com2 = meio+1, comAux = 0, tam = fim-comeco+1;
+    int vetAux[tam];
+    while(com1 <= meio && com2 <= fim){
+        if(vetor[com1] < vetor[com2]) {
+            vetAux[comAux] = vetor[com1];
+            com1++;
+        } else {
+            vetAux[comAux] = vetor[com2];
+            com2++;
+        }
+        comAux++;
+    }
 
-    sleep(1);
-    system("clear");
-    imprimeGrafico(vetor);
-  printf("Vetor ordenado com Bucket Sort:\n");
-  imprimeVet(vetor);
-  //printf("numero de iteracoes: %d",iteracoes);
+    while(com1 <= meio){  //Caso ainda haja elementos na primeira metade
+        vetAux[comAux] = vetor[com1];
+        comAux++;
+        com1++;
+    }
+
+    while(com2 <= fim) {   //Caso ainda haja elementos na segunda metade
+        vetAux[comAux] = vetor[com2];
+        comAux++;
+        com2++;
+    }
+
+    for(comAux = comeco; comAux <= fim; comAux++){    //Move os elementos de volta para o vetor original
+        vetor[comAux] = vetAux[comAux-comeco];
+    }
+}
+
+void mergeSort(int *vetor, int comeco, int fim){
+    if (comeco < fim) {
+        int meio = (fim+comeco)/2;
+        mergeSort(vetor, comeco, meio);
+        mergeSort(vetor, meio+1, fim);
+        mergeFim(vetor, comeco, meio, fim);
+        for(int pause = 0; pause <= PAUSE;pause++); //loop para simular um pause
+        system("clear");
+        imprimeGrafico(vetor);
+    }
 }
 
 void quickSort(int *vetor, int inicio, int fim){
   if(inicio < fim){
     int pivoIndice = geraPivoRandomico(vetor, inicio, fim);
-    sleep(1);
-    system("clear");
-    imprimeGrafico(vetor);
     quickSort(vetor, inicio, pivoIndice - 1);
     quickSort(vetor, pivoIndice + 1, fim);
   }
-  //printf("Vetor ordenado com Quick Sort:\n"); TIREI ESSE PRINT E O IMPRIMEVET E COLOQUEI DEPOIS DA CHAMADA NO CASE
-  //imprimeVet(vetor);
-  //printf("numero de iteracoes: %d",iteracoes);
 }
 
   //funcao que troca a posicao de dois elementos pro quick sort
@@ -154,6 +192,9 @@ int particiona(int *vetor, int inicio, int fim){
     if(vetor[i] <= pivo){
       troca(vetor, i, pivoIndice);
       pivoIndice++;
+      for(int pause = 0; pause <= PAUSE;pause++); //loop para simular um pause
+      system("clear");
+      imprimeGrafico(vetor);
     }
   }
   //troca o pivo
@@ -163,7 +204,6 @@ int particiona(int *vetor, int inicio, int fim){
 }
 
 int geraPivoRandomico(int *vetor, int inicio, int fim){
-  //srand(time(NULL));
   //seleciona um pivo aleatorio no vetor
   int pivoIndice = (rand() % (fim - inicio + 1)) + inicio;
   //coloca o pivo no fim
@@ -199,6 +239,9 @@ void imprimeGrafico(int *vetor){
   //a linha de numero igual ao valor do vetor nessa posi��o recebe um *
   for(linha = 0; linha < MAX;linha++){
     matriz[vetor[linha]+1][linha+1] = '*';
+    for(int i = vetor[linha]+1; i > 0;i--){
+      matriz[i][linha+1] = '*';
+    }
   }
   //print do grafico
   for(linha = MAX; linha >= 0;linha--){
